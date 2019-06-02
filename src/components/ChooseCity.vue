@@ -69,7 +69,7 @@
                 this.searchKeyword =s;
                 this.isListShow = false;
                 console.log(s);
-                console.log(this.itemArr[i].content[s].indexOf(keyword));
+                console.log(this.itemArr[i].content.indexOf(keyword));
               }else{
                 this.searchKeyword = "";
               }
