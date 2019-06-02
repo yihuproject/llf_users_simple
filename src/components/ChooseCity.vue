@@ -20,7 +20,7 @@
       </van-row>
       <van-row  class= "cc_container_location_d">
         <van-col class= "cc_container_location_d_col" :span= "22" :offset= "2">
-          <span class= "cc_container_location_d_col_text">深圳市</span>
+          <span class= "cc_container_location_d_col_text">{{city}}</span>
         </van-col>
       </van-row>
     </div>
@@ -33,7 +33,7 @@
         <div @click="chooseCityPoi($event)" class= "area_list_item_content" v-for= "con in item.content">{{con}}</div>
       </div>
       <div  v-show="!isListShow" class= "area_list_item" ref= "listtitle">
-        <div @click="chooseCityPoi($event)" class= "area_list_item_content">{{searchKeyword}}</div>
+        <div @click="chooseCityPoi($event)" class= "area_list_item_content"  v-for= "keyArr in searchKeyword">{{keyArr}}</div>
       </div>
     </div>
   </div>
@@ -46,9 +46,10 @@
       return {
         itemArr:[],
         keyword:"",
-        searchKeyword:"",
+        searchKeyword:[],
         originPoi:null,
-        isListShow:true
+        isListShow:true,
+        city:"深圳市"
       }
     },
     components: {
@@ -58,27 +59,25 @@
         this.$router.push('/return');
       },
       searchCity (keyword) {//搜索城市
-      let hasChinese = /.*[\u4e00-\u9fa5]+.*$/.test(keyword); // 是否有中文
-      let hasWord = /^[a-zA-Z]/.test(keyword); // 是否有英文
-      if (hasChinese && hasWord) {
-        return ;
-      }else if (keyword.length>0&&hasChinese) {
-          for (var i in this.itemArr) {
-            for (var s of this.itemArr[i].content) {
-              if (s.indexOf(keyword)>-1) {
-                this.searchKeyword =s;
-                this.isListShow = false;
-                console.log(s);
-                console.log(this.itemArr[i].content.indexOf(keyword));
-              }else{
-                this.searchKeyword = "";
+        let hasChinese = /.*[\u4e00-\u9fa5]+.*$/.test(keyword); // 是否有中文
+        let hasWord = /^[a-zA-Z]/.test(keyword); // 是否有英文
+        if (keyword.length>0&&hasChinese&&!hasWord) {
+            for (var i in this.itemArr) {
+              for (var s of this.itemArr[i].content) {
+                if (s.indexOf(keyword)>-1) {
+                  this.searchKeyword.push(s);
+                  this.isListShow = false;
+                  console.log(s);
+                  console.log(this.itemArr[i].content.indexOf(keyword));
+                  }else{
+                  // this.searchKeyword = "";
+                }
               }
             }
+          }else{
+
           }
-        }else{
-          // this.$toast("请输入中文字符");
-        }
-      },
+        },
       toPoi (index) {//点击跳转
           this.originPoi = this.$refs.listtitle[index].offsetTop;
           document.documentElement.scrollTop = this.originPoi - 170;
@@ -104,6 +103,7 @@
       keyword(newValue, oldValue) {
         if(newValue == ""){
           this.isListShow = true;
+          this.searchKeyword = [];
         }
       }
     },
