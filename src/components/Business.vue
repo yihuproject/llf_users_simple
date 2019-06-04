@@ -14,7 +14,7 @@
     <van-row class="business_store_contact">
       <van-col :span="22" offset="1">
         <p class="business_store_contact_address">{{totalData.area_info}}</p>
-        <span class="business_store_contact_icon"><img src="/static/images/order_ic_dianhua.png" alt=""></span>
+        <span class="business_store_contact_icon"><img src="http://47.111.27.189:88/users/static/images/order_ic_dianhua.png" alt=""></span>
       </van-col>
     </van-row>
     <van-row class="business_detail_info">
@@ -47,7 +47,7 @@
           <van-col :span="23" :offset="1">
             <span class="left">营业执照</span>
             <span class="right">
-              <router-link to="/"><van-icon name="arrow"></van-icon></router-link>
+              <router-link :to="{path:'/license',query:{store_id:store_id,logo_img:logo_img,face_img:face_img}}"><van-icon name="arrow"></van-icon></router-link>
             </span>
           </van-col>
         </van-row>
@@ -61,17 +61,21 @@
     data () {
       return {
         totalData:"a",
-        store_id:6
+        store_id:this.$route.params.store_id,
+        logo_img:"",
+        face_img:""
       }
     },
     created () {
       var formData = new FormData();
-      formData.append("store_id",this.store_id);
+      formData.append("store_id",this.$route.params.store_id);
       this.$axios.post("/u1/storeinfo",formData,JSON.stringify({headers: {"Content-Type":"application/json"}}))
       .then((data)=>{
         console.log(data);
         if (data.data.code == 200) {
           this.totalData = data.data.data;
+          this.face_img = data.data.data.face_img;
+          this.logo_img = data.data.data.logo_img;
         }
       })
       .catch((err)=>{

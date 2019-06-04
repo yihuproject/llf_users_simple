@@ -25,41 +25,41 @@ export default new Router({
       component: ChooseCity
     },
     {
-      path: '/cc',
+      path: '/cc/:city',
       component: ChooseCity
     },
     {
-      path: '/evaluate',
+      path: '/evaluate/:store_id',
       component: EvaluateIndex,
       children: [
          {
-          path: '/',
-          component: EvaluateAll
+          path: '/evaluate/:store_id',
+          component: EvaluateAll,
         },
         {
-          path: '/evaluateall',
-          component: EvaluateAll
+          path: '/evaluate/:store_id/evaluateall',
+          component: EvaluateAll,
         },
         {
-          path: '/evaluates',
+          path: '/evaluate/:store_id/evaluates',
           component: EvaluateSatisfied
         },
         {
-          path: '/evaluateus',
+          path: '/evaluate/:store_id/evaluateus',
           component: EvaluateUnSatisfied
         },
         {
-          path: '/evaluatehimg',
+          path: '/evaluate/:store_id/evaluatehimg',
           component: EvaluateHasImg
         }
       ]
     },
     {
-      path: '/business',
+      path: '/business/:store_id',
       component: Business
     },
     {
-      path: '/p_detail',
+      path: '/p_detail/:store_id/:goods_id/:member_id?',
       component: ProductDetail
     },
     {

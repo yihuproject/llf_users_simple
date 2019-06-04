@@ -10,7 +10,7 @@
             <span class="all_list_evaluate_text">{{li.member_name}}</span>
             <span class="all_list_evaluate_rate">
               <van-rate :size="5" v-model="li.haoping" color="rgba(255,133,60,1)" void-icon="star" void-color="#e5e5e5" readonly/>
-              <i>{{evaluateState}}</i>
+              <i>满意</i>
             </span>
           </van-col>
           <van-col :span="5" class="all_list_time">
@@ -31,7 +31,7 @@
             </van-row>
             <van-row class="all_list_bottom_rol_evaluate">
               <van-col class="all_list_bottom_rol_evaluate_col"  :span="24">
-                {{li.business}}
+                {{li.replay}}
               </van-col>
             </van-row>
           </van-col>
@@ -51,14 +51,15 @@
     },
     created () {
           var formData = new FormData();
-          formData.append("store_id",this.$parent.store_id);
+          formData.append("store_id",this.$route.params.store_id);
           formData.append("type",1);//type:1、2、3、4
           this.$axios.post("/u1/all_comment",formData,JSON.stringify({headers: {"Content-Type":"application/json"}}))
           .then((data)=>{
             console.log(data);
             if (data.data.code == 200) {
               this.totalData = data.data.data.comment.list;
-              console.log(this.totalData);
+            }else{
+              this.$toast(data.data.msg);
             }
           })
           .catch((err)=>{

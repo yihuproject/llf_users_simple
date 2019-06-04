@@ -50,7 +50,7 @@
     },
     mounted () {
         var formData = new FormData();
-        formData.append("store_id",this.$parent.store_id);
+        formData.append("store_id",this.$route.params.store_id);
         formData.append("type",3);//type:1、2、3、4
         this.$axios.post("/u1/all_comment",formData,JSON.stringify({headers: {"Content-Type":"application/json"}}))
         .then((data)=>{

@@ -65,8 +65,8 @@
               <van-col class="product_valuate_items_info" :span="14" :offset="1">
                 <p class="product_valuate_items_info_title">{{item.member_name}}</p>
                 <p class="product_valuate_items_info_thumb_up">
-                  <img src="/static/images/pingjia_ic_dianz.png" v-show="item.is_zan==1">
-                  <img class="thumb_up_false" src="/static/images/pingjia_ic_dianz1.png" v-show="item.is_zan==0">
+                  <img src="http://47.111.27.189:88/users/static/images/pingjia_ic_dianz.png" v-show="item.is_zan==1">
+                  <img class="thumb_up_false" src="http://47.111.27.189:88/users/static/images/pingjia_ic_dianz1.png" v-show="item.is_zan==0">
                   <i v-show="item.is_zan==1">赞了该商品</i>
                 </p>
               </van-col>
@@ -104,23 +104,21 @@
           }
         },
         realdiscount:"a",
-        member_id:1,
-        store_id:6,
-        goods_id:49
       }
     },
     created () {
        var formData = new FormData();
-       formData.append("member_id",this.member_id);
-       formData.append("store_id",this.store_id);
-       formData.append("goods_id",this.goods_id);
+       formData.append("store_id",this.$route.params.store_id);
+       formData.append("goods_id",this.$route.params.goods_id);
+       formData.append("member_id",this.$route.params.member_id);
        this.$axios.post("/u1/goods_detail",formData)
        .then((data)=>{
        	console.log(data);
         if (data.data.code == 200) {
           this.totalData = data.data.data;
-          var a = this.totalData.goods_info.goods_price/this.totalData.goods_info.goods_marketprice;
-          this.realdiscount = a.toFixed(2)*10+"折";
+          console.log(data);
+          var a = (this.totalData.goods_info.goods_price/this.totalData.goods_info.goods_marketprice)*10;
+          this.realdiscount = a.toFixed(1)+"折";
         }
        })
        .catch((err)=>{

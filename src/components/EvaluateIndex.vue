@@ -29,22 +29,22 @@
       </van-row>
    <van-row class="evaluate_card">
         <van-row class="evaluate_card_items">
-          <router-link to="evaluateall" @touchend="queryData(1,store_id)">
+          <router-link :to="{path:'/evaluate/'+member_id+'/evaluateall'}">
             <van-col :span='6'  class="evaluate_card__item">
               全部({{tmsg.comment.all}})
             </van-col>
           </router-link>
-          <router-link to="evaluates"  @touchend="queryData(2,store_id)">
+          <router-link :to="{path:'/evaluate/'+member_id+'/evaluates'}">
             <van-col :span='6'  class="evaluate_card__item">
               满意({{tmsg.comment.bumanyi}})
             </van-col>
           </router-link>
-          <router-link to="/evaluateus"  @touchend="queryData(3,store_id)">
+          <router-link  :to="{path:'/evaluate/'+member_id+'/evaluateus'}">
             <van-col :span='6'  class="evaluate_card__item">
               不满意({{tmsg.comment.manyi}})
             </van-col>
           </router-link>
-          <router-link to="/evaluatehimg"  @touchend="queryData(4,store_id)">
+          <router-link :to="{path:'/evaluate/'+member_id+'/evaluatehimg'}">
             <van-col :span='6'  class="evaluate_card__item">
               有图({{tmsg.comment.youtu}})
             </van-col>
@@ -60,6 +60,7 @@
   export default {
     data () {
       return {
+        member_id:this.$route.params.store_id,
         tmsg:{
           comment:{
             all: 0,
@@ -75,17 +76,17 @@
             kouwei:0,
             peisong:0
           }
-        },
-        store_id:3
+        }
       }
     },
     created () {
         var formData = new FormData();
-        formData.append("store_id",this.store_id);
+        formData.append("store_id",this.$route.params.store_id);
         formData.append("type",1);//type:1、2、3、4
         this.$axios.post("/u1/all_comment",formData,JSON.stringify({headers: {"Content-Type":"application/json"}}))
         .then((data)=>{
           console.log(data);
+          console.log(this.$route.params.store_id);
           if (data.data.code == 200) {
             this.tmsg = data.data.data;
           }

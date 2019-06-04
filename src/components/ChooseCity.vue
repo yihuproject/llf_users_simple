@@ -5,15 +5,15 @@
       <van-row class= "cc_container_search">
       	<van-col class= "cc_container_row_col" :span= "22" :offset= "1">
           <div class= "cc_container_row_col_search">
-            <img src= "/static/images/icon_sousuo.png">
+            <img :src= "searchimg">
           </div>
-          <input class= "cc_container_row_col_input" @input="searchCity(keyword)" type= "text" placeholder= "请输入城市名称或首字母" v-model="keyword">
+          <input class= "cc_container_row_col_input" type= "text" placeholder= "请输入城市名称或首字母" v-model="keyword">
         </van-col>
       </van-row>
       <van-row  class= "cc_container_location">
         <van-col class= "cc_container_location_lo" :span= "23" :offset= "1">
           <div class= "cc_container_location_lo_icon">
-            <img src= "/static/images/icon_ic_dingqianwsz.png">
+            <img :src= "pointimg">
           </div>
           <span class= "cc_container_location_lo_text">当前定位</span>
         </van-col>
@@ -25,12 +25,12 @@
       </van-row>
     </div>
     <ul class= "area_list_index" v-show="isListShow">
-      <li @touchend="toPoi(index)" v-for= "(li,index) in itemArr" :key="index">{{li.title}}</li>
+      <li @touchstart="toPoi($event)" v-for= "(li,index) in itemArr" :key="index">{{index}}</li>
     </ul>
     <div class= "area_list">
       <div  v-show="isListShow" class= "area_list_item" ref= "listtitle" v-for= "(item,index) in itemArr" :key="index">
-        <div class= "area_list_item_title" :data-index= "index">{{item.title}}</div>
-        <div @click="chooseCityPoi($event)" class= "area_list_item_content" v-for= "con in item.content">{{con}}</div>
+        <div class= "area_list_item_title" :data-index= "index">{{index}}</div>
+        <div @click="chooseCityPoi($event)" class= "area_list_item_content" v-for= "con in item">{{con.name}}</div>
       </div>
       <div  v-show="!isListShow" class= "area_list_item" ref= "listtitle">
         <div @click="chooseCityPoi($event)" class= "area_list_item_content"  v-for= "keyArr in searchKeyword">{{keyArr}}</div>
@@ -49,7 +49,9 @@
         searchKeyword:[],
         originPoi:null,
         isListShow:true,
-        city:"深圳市"
+        city:"",
+        searchimg:"http://47.111.27.189:88/static/images/icon_sousuo.png",
+        pointimg:"http://47.111.27.189:88/static/images/icon_ic_dingqianwsz.png"
       }
     },
     components: {
@@ -60,60 +62,92 @@
       },
       searchCity (keyword) {//搜索城市
         let hasChinese = /.*[\u4e00-\u9fa5]+.*$/.test(keyword); // 是否有中文
-        let hasWord = /^[a-zA-Z]/.test(keyword); // 是否有英文
-        if (keyword.length>0&&hasChinese&&!hasWord) {
-            for (var i in this.itemArr) {
-              for (var s of this.itemArr[i].content) {
-                if (s.indexOf(keyword)>-1) {
-                  this.searchKeyword.push(s);
+        let hasLWord = /^[a-z]/.test(keyword); // 是否有英文
+        let hasBWord = /^[A-Z]/.test(keyword); // 是否有英文
+        if(hasChinese&&hasLWord&&hasBWord){
+         return ; 
+        }else if(keyword.length>0&&hasChinese&&!hasLWord&&!hasBWord){ 
+          for (var i in this.itemArr) {
+            console.log(this.itemArr[i]);
+              for (var s of this.itemArr[i]) {
+                console.log(s.name);
+                if (s.name.indexOf(keyword)>-1) {
+                  this.searchKeyword.push(s.name);
                   this.isListShow = false;
-                  console.log(s);
-                  console.log(this.itemArr[i].content.indexOf(keyword));
                   }else{
                   // this.searchKeyword = "";
                 }
               }
             }
-          }else{
-
-          }
+        }else if(keyword.length>0&&!hasChinese&&hasLWord&&!hasBWord){
+          for (var i in this.itemArr) {
+            console.log(this.itemArr[i]);
+              for (var s of this.itemArr[i]) {
+                console.log(s.pinyin);
+                if (s.pinyin.indexOf(keyword)>-1) {
+                  this.searchKeyword.push(s.name);
+                  this.isListShow = false;
+                  }else{
+                  // this.searchKeyword = "";
+                }
+              }
+            }
+        }else if(keyword.length>0&&!hasChinese&&!hasLWord&&hasBWord){
+          for (var i in this.itemArr) {
+            console.log(this.itemArr[i]);
+              for (var s of this.itemArr[i]) {
+                console.log(s.abbr);
+                if (s.abbr.indexOf(keyword)>-1) {
+                  this.searchKeyword.push(s.name);
+                  this.isListShow = false;
+                  }else{
+                  // this.searchKeyword = "";
+                }
+              }
+            }
+        }
         },
-      toPoi (index) {//点击跳转
-          this.originPoi = this.$refs.listtitle[index].offsetTop;
-          document.documentElement.scrollTop = this.originPoi - 170;
-          //标题吸顶
-          // for (var i in this.$refs.listtitle) {
-          //   this.$refs.listtitle[i].className="area_list_item";
-          // }
-          // this.$refs.listtitle[index].className="area_list_item active";
+      toPoi (e) {//点击跳转
+      console.log(e);
+      this.originPoi = e.currentTarget.offsetTop;
+      document.documentElement.scrollTop = this.originPoi*3;
       },
       chooseCityPoi (e) {//选择城市后的跳转链接
         if(e.target.innerHTML){
-          this.$router.push("/cc/"+e.target.innerHTML);
+          this.$router.push("/choose_c/"+e.target.innerHTML);
+          this.city = this.$route.params.city;
         }
       },
       scroll () {//滑动的时候的监听事件
         this.$nextTick(function(){
            let scrollTop =  window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
-      
         })
       }
     },
     watch: {
       keyword(newValue, oldValue) {
-        if(newValue == ""){
+        if(newValue.length>oldValue.length){
+          this.isListShow = false;
+          this.searchKeyword = [];
+          this.searchCity(newValue);
+        }else if(newValue.length<oldValue.length){
+          this.isListShow = false;
+          this.searchKeyword = [];
+          this.searchCity(newValue);
+        }else{
           this.isListShow = true;
           this.searchKeyword = [];
         }
       }
     },
     mounted () {
+      this.city = this.$route.params.city;
       window.addEventListener('scroll', this.scroll)
       this.$axios.post("/u1/area_list")
       .then((data)=>{
         if (data.data.code == 200) {
-          // this.$toast("请求成功");
           this.itemArr = data.data.data;
+          console.log(this.itemArr);
         }
       })
       .catch((err)=>{
